@@ -99,19 +99,19 @@ After writing the smart contract, go to the Solidity Compiler section and select
 
 Then press “Compile” button under the Compiler selector.
 
-<figure><img src="../../.gitbook/assets/image (17) (1).png" alt="" width="320"><figcaption></figcaption></figure>
+<figure><img src="../../.gitbook/assets/image (17) (2).png" alt="" width="320"><figcaption></figcaption></figure>
 
 #### 3. Select your Metamask wallet as Deploy environment
 
 In the “Deploy and Run Transactions” section, move to the Environment and select your Metamask Provider, remember you must be connected to KiiChain Testnet
 
-<figure><img src="../../.gitbook/assets/image (18).png" alt="" width="320"><figcaption></figcaption></figure>
+<figure><img src="../../.gitbook/assets/image (18) (1).png" alt="" width="320"><figcaption></figcaption></figure>
 
 #### 4. Deploy Smart contract
 
 Select the smart contract to be deployed and write the Constructor parameters is Remix detects them
 
-<figure><img src="../../.gitbook/assets/image (19).png" alt="" width="563"><figcaption></figcaption></figure>
+<figure><img src="../../.gitbook/assets/image (19) (1).png" alt="" width="563"><figcaption></figcaption></figure>
 
 Finally, you can interact with the different functions in the same section above the Deploy button.
 
@@ -214,82 +214,33 @@ forge script script/Counter.s.sol:CounterScript --fork-url https://json-rpc.uno.
 
 A success message should appear.
 
-### Deploy with Thirdweb
+### Troubleshooting — Remix on Oro (Testnet, Chain ID 1336)
 
-In this example, we will create a ERC721 (Non fungible token).
+If a Remix deploy shows **“Transaction mined but execution failed (status 0x0)”**, set:
 
-#### 1. Create an account
+* **Solidity Compiler → EVM Version = `london`**
+* **Optimizer: enabled (200 runs)**
+* **Disable `viaIR`** (if it was enabled)
 
-Create an account in thirdweb, create an API key [here](https://thirdweb.com/dashboard/settings/api-keys), and link your wallet.
+Re-compile, then deploy again on **KiiChain Testnet (Oro, chainId 1336)**. This avoids newer EVM opcodes not yet supported by Oro.
 
-Store the API key in a secure place.
+#### Hardhat — KiiChain Oro Network
 
-#### 2. Create a project
+```ts
+// hardhat.config.ts
+import { HardhatUserConfig } from "hardhat/config";
+import "@nomicfoundation/hardhat-toolbox";
 
-```bash
-npx thirdweb create
+const config: HardhatUserConfig = {
+  solidity: { version: "0.8.20", settings: { optimizer: { enabled: true, runs: 200 } } },
+  networks: {
+    kiichain: {
+      url: "https://json-rpc.uno.sentry.testnet.v3.kiivalidator.com/",
+      chainId: 1336,
+      // accounts: [process.env.PRIVATE_KEY!], // use .env, never hardcode keys
+    },
+  },
+};
+export default config;
+
 ```
-
-A message appears
-
-```bash
-Need to install the following packages:
-thirdweb@5.46.1
-Ok to proceed? (y) y
-```
-
-After the installation this screen should appear, select “Contract”
-
-```bash
-    $$\\     $$\\       $$\\                 $$\\                         $$\\
-    $$ |    $$ |      \\__|                $$ |                        $$ |
-  $$$$$$\\   $$$$$$$\\  $$\\  $$$$$$\\   $$$$$$$ |$$\\  $$\\  $$\\  $$$$$$\\  $$$$$$$\\
-  \\_$$  _|  $$  __$$\\ $$ |$$  __$$\\ $$  __$$ |$$ | $$ | $$ |$$  __$$\\ $$  __$$\\
-    $$ |    $$ |  $$ |$$ |$$ |  \\__|$$ /  $$ |$$ | $$ | $$ |$$$$$$$$ |$$ |  $$ |
-    $$ |$$\\ $$ |  $$ |$$ |$$ |      $$ |  $$ |$$ | $$ | $$ |$$   ____|$$ |  $$ |
-    \\$$$$  |$$ |  $$ |$$ |$$ |      \\$$$$$$$ |\\$$$$$\\$$$$  |\\$$$$$$$\\ $$$$$$$  |
-     \\____/ \\__|  \\__|\\__|\\__|       \\_______| \\_____\\____/  \\_______|\\_______/
-
- 💎 thirdweb v0.14.12 💎
-
-? What type of project do you want to create? » - Use arrow-keys. Return to submit.
-    App
->   Contract
-    Dynamic Contract Extension
-```
-
-Select the following options:
-
-```bash
-√ What type of project do you want to create? » Contract
-√ What is your project named? ... ERC721-Example
-√ What framework do you want to use? » Forge
-√ What will be the name of your new smart contract? ... MyContract
-√ What type of contract do you want to start from? » ERC721
-√ What extensions do you want to add to your contract? » None
-```
-
-#### 3. Write a smart contract and deploy
-
-Enter the directory and run the following command:
-
-```bash
-cd erc721-example
-npx thirdweb deploy -k yourApiKey
-```
-
-Open the link and fill in the fields.
-
-<figure><img src="../../.gitbook/assets/image (20).png" alt="" width="563"><figcaption></figcaption></figure>
-
-In chain choose
-
-add Custom Network
-
-<figure><img src="../../.gitbook/assets/image (21).png" alt="" width="364"><figcaption></figcaption></figure>
-
-Finally, select Deploy Now and accept the transaction in your wallet.
-
-### Confirming Smart Contract on Explorer App
-
-Remember that you can check the smart contracts Deployed [here](https://app.kiiglobal.io/smart-contracts).
